@@ -1,0 +1,332 @@
+--// UI LIBRARY
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Lozarth/IreXion-UI-Library/main/IreXion.lua"))()
+
+local Gui = Library:AddGui({
+	Title = {"DOT.lua", "DA HOOD"},
+	ThemeColor = Color3.fromRGB(255, 0, 0),
+	ToggleKey = Enum.KeyCode.RightControl,
+})
+
+local Tab = Gui:AddTab("Self")
+local Aimbot = Gui:AddTab("Aimbot")
+local Visuals = Gui:AddTab("Visuals")
+local Misc = Gui:AddTab("Miscellaneous")
+local Settings = Gui:AddTab("Settings")
+
+local SelfCat = Tab:AddCategory("Self")
+local AimbotCat = Aimbot:AddCategory("Aimbot")
+local VisualsCat = Visuals:AddCategory("Visuals")
+
+
+local Button = SelfCat:AddButton("Fly (X)", function()
+	local plr = game.Players.LocalPlayer
+	local mouse = plr:GetMouse()
+
+	localplayer = plr
+
+	if workspace:FindFirstChild("Core") then
+		workspace.Core:Destroy()
+	end
+
+	local Core = Instance.new("Part")
+	Core.Name = "Core"
+	Core.Size = Vector3.new(0.05, 0.05, 0.05)
+
+	spawn(function()
+		Core.Parent = workspace
+		local Weld = Instance.new("Weld", Core)
+		Weld.Part0 = Core
+		Weld.Part1 = localplayer.Character.LowerTorso
+		Weld.C0 = CFrame.new(0, 0, 0)
+	end)
+
+	workspace:WaitForChild("Core")
+
+	local torso = workspace.Core
+	flying = true
+	local speed=10
+	local keys={a=false,d=false,w=false,s=false} 
+	local e1
+	local e2
+	local function start()
+		local pos = Instance.new("BodyPosition",torso)
+		local gyro = Instance.new("BodyGyro",torso)
+		pos.Name="EPIXPOS"
+		pos.maxForce = Vector3.new(math.huge, math.huge, math.huge)
+		pos.position = torso.Position
+		gyro.maxTorque = Vector3.new(9e9, 9e9, 9e9) 
+		gyro.cframe = torso.CFrame
+		repeat
+			wait()
+			localplayer.Character.Humanoid.PlatformStand=true
+			local new=gyro.cframe - gyro.cframe.p + pos.position
+			if not keys.w and not keys.s and not keys.a and not keys.d then
+				speed=5
+			end
+			if keys.w then 
+				new = new + workspace.CurrentCamera.CoordinateFrame.lookVector * speed
+				speed=speed+0
+			end
+			if keys.s then 
+				new = new - workspace.CurrentCamera.CoordinateFrame.lookVector * speed
+				speed=speed+0
+			end
+			if keys.d then 
+				new = new * CFrame.new(speed,0,0)
+				speed=speed+0
+			end
+			if keys.a then 
+				new = new * CFrame.new(-speed,0,0)
+				speed=speed+0
+			end
+			if speed>10 then
+				speed=5
+			end
+			pos.position=new.p
+			if keys.w then
+				gyro.cframe = workspace.CurrentCamera.CoordinateFrame*CFrame.Angles(-math.rad(speed*0),0,0)
+			elseif keys.s then
+				gyro.cframe = workspace.CurrentCamera.CoordinateFrame*CFrame.Angles(math.rad(speed*0),0,0)
+			else
+				gyro.cframe = workspace.CurrentCamera.CoordinateFrame
+			end
+		until flying == false
+		if gyro then gyro:Destroy() end
+		if pos then pos:Destroy() end
+		flying=false
+		localplayer.Character.Humanoid.PlatformStand=false
+		speed=10
+	end
+	e1=mouse.KeyDown:connect(function(key)
+		if not torso or not torso.Parent then flying=false e1:disconnect() e2:disconnect() return end
+		if key=="w" then
+			keys.w=true
+		elseif key=="s" then
+			keys.s=true
+		elseif key=="a" then
+			keys.a=true
+		elseif key=="d" then
+			keys.d=true
+		elseif key=="x" then
+			if flying==true then
+				flying=false
+			else
+				flying=true
+				start()
+			end
+		end
+	end)
+	e2=mouse.KeyUp:connect(function(key)
+		if key=="w" then
+			keys.w=false
+		elseif key=="s" then
+			keys.s=false
+		elseif key=="a" then
+			keys.a=false
+		elseif key=="d" then
+			keys.d=false
+		end
+	end)
+	start()
+
+end)
+local Button2 = SelfCat:AddButton("CFrame Speed (Z)", function()
+	local L_134_ = game:service('Players')
+	local L_135_ = L_134_.LocalPlayer
+	repeat
+		wait()
+	until L_135_.Character
+	local L_136_ = game:service('UserInputService')
+	local L_137_ = game:service('RunService')
+	getgenv().Multiplier = 0.5
+	local L_138_ = true
+	local L_139_
+	L_136_.InputBegan:connect(function(L_140_arg0)
+		if L_140_arg0.KeyCode == Enum.KeyCode.LeftBracket then
+			Multiplier = Multiplier + 0.01
+			print(Multiplier)
+			wait(0.2)
+			while L_136_:IsKeyDown(Enum.KeyCode.LeftBracket) do
+				wait()
+				Multiplier = Multiplier + 0.01
+				print(Multiplier)
+			end
+		end
+		if L_140_arg0.KeyCode == Enum.KeyCode.RightBracket then
+			Multiplier = Multiplier - 0.01
+			print(Multiplier)
+			wait(0.2)
+			while L_136_:IsKeyDown(Enum.KeyCode.RightBracket) do
+				wait()
+				Multiplier = Multiplier - 0.01
+				print(Multiplier)
+			end
+		end
+		if L_140_arg0.KeyCode == Enum.KeyCode.Z then
+			L_138_ = not L_138_
+			if L_138_ == true then
+				repeat
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame + game.Players.LocalPlayer.Character.Humanoid.MoveDirection * Multiplier
+					game:GetService("RunService").Stepped:wait()
+				until L_138_ == false
+			end
+		end
+	end)
+end)
+
+local Button3 = SelfCat:AddButton("Unjail", function()
+	if game:GetService("Players").LocalPlayer.DataFolder.Currency.Value >= 125 then
+		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-270.94, 20.327, -242.38)
+		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-270.94, 20.327, -242.38)
+		wait()
+		fireclickdetector(game:GetService("Workspace").Ignored.Shop["[Key] - $125"].ClickDetector)
+		wait(.1)
+		fireclickdetector(game:GetService("Workspace").Ignored.Shop["[Key] - $125"].ClickDetector)
+		fireclickdetector(game:GetService("Workspace").Ignored.Shop["[Key] - $125"].ClickDetector)
+		repeat
+			wait()
+		until game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("[Key]")
+		local Hum = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+		if Hum.Health > 0 then
+			key1 = game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("[Key]")
+			if key1 then
+				Hum:EquipTool(key1)
+				for i, v in pairs(game:GetService"Players".LocalPlayer.Character:GetChildren()) do
+					if v:isA("Tool") then
+						game:GetService("Players").LocalPlayer.Character.Humanoid:EquipTool(key1)
+						game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-485.668, 23.631, -285.169)
+						v:Activate()
+					end
+				end
+			end
+		end
+	end
+
+end)
+local Button4 = SelfCat:AddButton("Noclip (K)", function()
+	-- // Variables
+	local localPlayer       = game:GetService("Players").LocalPlayer
+	local localCharacter    = localPlayer.Character
+	local Mouse             = localPlayer:GetMouse()
+	local FistControl       = false
+	local LeftFist          = localCharacter.LeftHand
+	local RightFist         = localCharacter.RightHand
+
+	-- // Services
+	local uis = game:GetService("UserInputService")
+
+	-- // Coroutine Loop + Functions
+	local loopFunction = function()
+		LeftFist.CFrame  = CFrame.new(Mouse.Hit.p)
+		RightFist.CFrame = CFrame.new(Mouse.Hit.p)
+	end
+
+	local Loop
+
+	local Start = function()
+		Loop = game:GetService("RunService").Heartbeat:Connect(loopFunction)
+	end
+
+	local Pause = function()
+		Loop:Disconnect()
+	end
+
+	-- // Hotkeys
+	uis.InputBegan:connect(function(Key)
+		if (Key.KeyCode == Enum.KeyCode.Q) then
+			if (FistControl == false) then
+				FistControl = true
+				Start()
+				pcall(function()
+					localCharacter.RightHand.RightWrist:Remove()
+					localCharacter.LeftHand.LeftWrist:Remove()
+				end)
+			elseif (FistControl == true) then
+				FistControl = false
+				Pause()
+				local rightwrist  = Instance.new("Motor6D")
+				rightwrist.Name   = "RightWrist"
+				rightwrist.Parent = localCharacter.RightHand
+				rightwrist.C0     = CFrame.new(1.18422506e-07, -0.5009287, -6.81715525e-18, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+				rightwrist.C1     = CFrame.new(3.55267503e-07, 0.125045404, 5.92112528e-08, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+				rightwrist.Part0  = localCharacter.RightLowerArm
+				rightwrist.Part1  = localCharacter.RightHand
+
+				local leftwrist   = Instance.new("Motor6D")
+				leftwrist.Name    = "LeftWrist"
+				leftwrist.Parent  = localCharacter.LeftHand
+				leftwrist.C0      = CFrame.new(0.000475466368, -0.5009287, 7.59417072e-20, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+				leftwrist.C1      = CFrame.new(0.000475821638, 0.125045404, 5.92112528e-08, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+				leftwrist.Part0   = localCharacter.LeftLowerArm
+				leftwrist.Part1   = localCharacter.LeftHand
+			end
+		end
+	end)
+end)
+getgenv().AimPart = "HumanoidRootPart" -- For R15 Games: {UpperTorso, LowerTorso, HumanoidRootPart, Head} | For R6 Games: {Head, Torso, HumanoidRootPart}
+getgenv().AimlockToggleKey = "Y" -- Toggles Aimbot On/Off 
+getgenv().AimRadius = 25 -- How far away from someones character you want to lock on at
+getgenv().ThirdPerson = false -- Locking onto someone in your Third Person POV
+getgenv().FirstPerson = true -- Locking onto someone in your First Person POV
+getgenv().TeamCheck = false -- Check if Target is on your Team (True means it wont lock onto your teamates, false is vice versa) (Set it to false if there are no teams)
+getgenv().PredictMovement = true -- Predicts if they are moving in fast velocity (like jumping) so the aimbot will go a bit faster to match their speed 
+getgenv().PredictionVelocity = 0.18--The speed of the PredictMovement feature 
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/zxciaz/Universal-Scripts/main/Aimbot", true))()
+--// Aimbot scripts
+local Bind = AimbotCat:AddBind("Aimbot Key", Enum.KeyCode.RightShift, function(bind)
+	getgenv().AimlockToggleKey = bind
+end)
+local AIMBOTTOGGLE = AimbotCat:AddToggle("Third Person", false, function(toggle)
+	getgenv().ThirdPerson = toggle
+end)
+local AIMBOTTOGGLE2 = AimbotCat:AddToggle("First Person", false, function(toggle)
+	getgenv().FirstPerson = toggle
+end)
+local Dropdown = AimbotCat:AddDropdown("Aim Part", {
+	"Head",
+	"UpperTorso",
+	"LowerTorso",
+	"HumanoidRootPart",}, function(name)
+	getgenv.AimPart = name
+	end)
+--// Adding the visuals category and scripts
+
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/dementiaenjoyer/dementia-esp-library/main/Library.lua"))()
+
+local DementiaEnjoyer = {
+
+    Box = {Enabled = false, Color = Color3.fromRGB(255, 255, 255)},
+    Tracers = {Enabled = false, Color = Color3.fromRGB(255, 255, 255)},
+    HealthBar = {Enabled = false, DynamicColor = true, Colors = {Healthy = Color3.fromRGB(0, 255, 0), Well = Color3.fromRGB(255, 255, 0), UnWell = Color3.fromRGB(255, 0, 0)}},
+    Flags = {Enabled = false, Distance = false, Health = false, Color = Color3.fromRGB(255, 255, 255), Font = 2},
+
+    Settings = {
+        TeamCheck = false,
+        RenderSelf = false,
+        Storage = {
+            Loaded = getgenv().Loaded,
+        }
+    }
+    
+}
+
+local ESPTOGGLE2 = VisualsCat:AddToggle("Boxes", false, function(toggle)
+Library.Box.Enabled = toggle
+end)
+	
+local ESPTOGGLE3 = VisualsCat:AddToggle("Tracers", false, function(toggle)
+	Library.Tracers.Enabled = toggle
+end)
+
+local ESPTOGGLE4 = VisualsCat:AddToggle("Healthbar", false, function(toggle)
+	Library.HealthBar.Enabled = toggle
+end)
+local ESPTOGGLE5 = VisualsCat:AddToggle("Flags", false, function(toggle)
+	Library.Flags.Enabled = toggle
+end)
+		
+		
+	
+	
